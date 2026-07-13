@@ -401,6 +401,12 @@ footer{padding:14px 24px 28px; color:var(--faint); font-size:11px; line-height:1
     <button class="mini" id="presetDsg">DSG 基準</button>
     <button class="mini" id="presetRyu">流速 基準</button>
   </div>
+  <div class="presetline">
+    <button class="mini" id="exportBtn">⬇ 構成+結果をJSON保存</button>
+    <button class="mini" id="importBtn">⬆ JSON読み込み (構成を再現)</button>
+    <input type="file" id="importFile" accept=".json,application/json" style="display:none">
+    <span class="lbl note" id="ioNote" style="align-self:center;"></span>
+  </div>
   <div class="fireline pro-only"><button class="fire" id="fireBtn">▶ 発射・動作を再生</button></div>
 
   <h2 class="sec pro-only">STAGE 2-3 — メカボックス内部 (時間 vs ピストン位置・圧力・BB弾速)</h2>
@@ -1088,6 +1094,9 @@ function bind(){
   $("proModeBtn").onclick=()=>setMode("pro");
   $("basicSetup").onchange=e=>applyBasicSetup(e.target.value);
   $("basicFireBtn").onclick=()=>{ applyBasicSetup($("basicSetup").value); playShot(); };
+  $("exportBtn").onclick=()=>exportConfig();
+  $("importBtn").onclick=()=>$("importFile").click();
+  $("importFile").onchange=e=>{ if(e.target.files[0]) importConfig(e.target.files[0]); e.target.value=""; };
   $("calibrateBtn").onclick=()=>calibrateFromMeasured();
   $("calResetBtn").onclick=()=>{ state.calibration={vScale:1,rScale:1,active:false}; $("calNote").textContent="校正を解除しました。使用BB、ホップ量、気温、バッテリー状態を揃えた実測値で補正してください。"; recalc(); };
   document.querySelectorAll("#hopChips .chip").forEach(b=>{
@@ -1116,6 +1125,7 @@ function setMode(mode){
 function applyBasicSetup(kind){
   state.calibration={vScale:1,rScale:1,active:false};
   PHYS.hopHold=PHYS_DEFAULT.hopHold; loadPhysInputs();
+  for(const g in state.custom) state.custom[g].on=false;   // カスタム値の残留防止
   state.sector="ssg"; state.teethCut=0; state.bearing=false; state.aoePadMM=0; state.nozzleD=4.3e-3;
   if(kind==="hc"){ applyPreset("hc"); }
   else if(kind==="cqb"){
@@ -1146,6 +1156,7 @@ function calibrateFromMeasured(){
 function applyPreset(kind){
   state.calibration={vScale:1,rScale:1,active:false};
   PHYS.hopHold=PHYS_DEFAULT.hopHold;   // 流速プリセットの残留対策
+  for(const g in state.custom) state.custom[g].on=false;   // カスタム値の残留防止
   if(kind==="hc"){
     state.batt="nimh84"; state.motor="eg30000"; state.wire="fet"; state.gear="g13";
     state.spring="m100"; state.teethCut=3; state.sector="ssg"; state.cyl="c12"; state.barrelMM=208;
@@ -1503,6 +1514,113 @@ function renderDiagnostics(cyc,intr,creep){
   }
   const body=warnings.length ? warnings.map(w=>`<div class="diag-${w[0]}">● ${w[1]}</div>`).join("") : '<div class="diag-ok">● 現在の入力では明確な警告条件なし。実機の気密・給弾・温度・ホップは別途確認してください。</div>';
   $("diagnostics").innerHTML=`<h3>PRO SAFETY DIAGNOSTICS</h3>${body}`;
+}
+
+/* ============================================================
+   構成の書き出し / 読み込み (JSON)
+   ============================================================ */
+const CONFIG_KEYS = ["batt","motor","wire","gear","spring","bearing","pistonG",
+  "teethCut","aoePadMM","sector","cyl","barrelMM","bore","bbG","nozzleD",
+  "hopMode","spinManual","h0","angleDeg","drag"];
+
+function buildExport(){
+  const cfg = {};
+  CONFIG_KEYS.forEach(k=>cfg[k]=state[k]);
+  cfg.calibration = {...state.calibration};
+  cfg.custom = JSON.parse(JSON.stringify(state.custom));
+  const phys = {};
+  Object.keys(PHYS_DEFAULT).forEach(k=>{ if(typeof PHYS[k]==="number") phys[k]=PHYS[k]; });
+
+  // 結果スナップショット (読み込み時は使用せず、記録用)
+  let results = null;
+  if (LAST){
+    const {cyc,intr,traj,creep} = LAST;
+    results = {
+      muzzle: {v0_ms:+intr.v0.toFixed(2), energy_J:+intr.E0.toFixed(3), legal_098J:intr.E0<=0.98},
+      cycle: cyc.stall
+        ? {stall:true, loadTorque_Nm:+cyc.Tload.toFixed(4), stallTorque_Nm:+cyc.Ts.toFixed(4)}
+        : {stall:false, rof_rps:+cyc.rof.toFixed(2), cycle_ms:+cyc.cycleMs.toFixed(1),
+           response_ms:+cyc.responseMs.toFixed(1), current_A:+cyc.I.toFixed(1),
+           voltageSag_V:+cyc.V.toFixed(2), intakeVacuum_kPa:+(cyc.vacKPa||0).toFixed(2)},
+      internal: {volumeRatio:+intr.volRatio.toFixed(3), efficiency_pct:+intr.effPct.toFixed(1),
+        peakPressure_kPaG:+((intr.Pmax-101325)/1000).toFixed(1), nozzleChoked:!!intr.choked,
+        bbDwell_ms:intr.bbExitT!==null?+(intr.bbExitT*1000).toFixed(2):null,
+        effectiveStroke_mm:+intr.strokeEffMM.toFixed(1)},
+      heavyBB: {E_020g_J:+LAST.creep.e20.toFixed(3), E_043g_J:+LAST.creep.e43.toFixed(3),
+        creepRatio:+(LAST.creep.e43/Math.max(LAST.creep.e20,1e-9)).toFixed(3)},
+      trajectory: {hopSpin_rps:+traj.spin.toFixed(1), range_m:+traj.res.landX.toFixed(1),
+        flightTime_s:+traj.res.landT.toFixed(2), impactV_ms:+traj.res.landV.toFixed(1),
+        impactE_J:+traj.res.landE.toFixed(3),
+        zeroIn_m:traj.res.zeroIn?+traj.res.zeroIn.toFixed(1):null,
+        maxRise_cm:+(traj.res.maxRise*100).toFixed(1)},
+    };
+  }
+  return { app:"aeg-lab", schema:1, savedAt:new Date().toISOString(),
+           config:cfg, phys, results };
+}
+
+function exportConfig(){
+  const data = buildExport();
+  const blob = new Blob([JSON.stringify(data,null,2)], {type:"application/json"});
+  const a = document.createElement("a");
+  const d = new Date(), z = n=>String(n).padStart(2,"0");
+  a.href = URL.createObjectURL(blob);
+  a.download = `aeg-lab_${d.getFullYear()}${z(d.getMonth()+1)}${z(d.getDate())}-${z(d.getHours())}${z(d.getMinutes())}.json`;
+  document.body.appendChild(a); a.click();
+  setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); }, 500);
+  $("ioNote").textContent = "保存しました: "+a.download;
+}
+
+function applyConfig(data){
+  if (!data || data.app!=="aeg-lab" || !data.config)
+    throw new Error("aeg-lab の構成JSONではありません");
+  const cfg = data.config;
+  // スカラー設定
+  CONFIG_KEYS.forEach(k=>{ if (cfg[k]!==undefined) state[k]=cfg[k]; });
+  if (cfg.calibration) state.calibration = {vScale:1,rScale:1,active:false, ...cfg.calibration};
+  // カスタム値 (グループごとに既知キーのみマージ)
+  if (cfg.custom){
+    for (const g in state.custom){
+      if (cfg.custom[g]) Object.keys(state.custom[g]).forEach(k=>{
+        if (cfg.custom[g][k]!==undefined) state.custom[g][k]=cfg.custom[g][k];
+      });
+    }
+  }
+  // 物理定数 (既知キー・数値のみ)
+  resetPhys();
+  if (data.phys) Object.keys(PHYS_DEFAULT).forEach(k=>{
+    if (typeof data.phys[k]==="number" && isFinite(data.phys[k])) PHYS[k]=data.phys[k];
+  });
+
+  // ---- UIウィジェットへ同期 ----
+  $("barrelRange").value=state.barrelMM; $("barrelNum").value=state.barrelMM;
+  $("pistonRange").value=state.pistonG;  $("pistonNum").value=state.pistonG;
+  $("pistonVal").textContent=state.pistonG;
+  $("aoeRange").value=state.aoePadMM;
+  $("h0Range").value=state.h0;   $("h0Val").textContent=(+state.h0).toFixed(1);
+  $("angRange").value=state.angleDeg; $("angVal").textContent=(+state.angleDeg).toFixed(1);
+  $("dragModel").value=state.drag;
+  $("nozzleNum").value=(state.nozzleD*1000).toFixed(2);
+  $("spinRange").value=Math.min(state.spinManual,800); $("spinNum").value=state.spinManual;
+  $("bearingChk").checked=!!state.bearing;
+  document.querySelectorAll("#sectorChips .chip").forEach(x=>x.classList.toggle("on",x.dataset.sector===state.sector));
+  document.querySelectorAll("#hopChips .chip").forEach(x=>x.classList.toggle("on",x.dataset.hop===state.hopMode));
+  $("manualSpinBox").style.display = state.hopMode==="manual" ? "block" : "none";
+  loadPhysInputs();
+  buildAll();
+  recalc();
+  const when = data.savedAt ? " ("+data.savedAt.replace("T"," ").slice(0,16)+" 保存)" : "";
+  $("ioNote").textContent = "構成を読み込みました"+when+(state.calibration.active?" ※実測校正も復元":"");
+}
+
+function importConfig(file){
+  const rd = new FileReader();
+  rd.onload = ()=>{
+    try { applyConfig(JSON.parse(rd.result)); }
+    catch(e){ $("ioNote").textContent = "読み込み失敗: "+e.message; }
+  };
+  rd.onerror = ()=>{ $("ioNote").textContent = "ファイルを読めませんでした"; };
+  rd.readAsText(file);
 }
 
 /* ============================================================
