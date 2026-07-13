@@ -26,6 +26,20 @@ header{
 header h1{font-size:20px; letter-spacing:.02em;}
 header h1 .tag{color:var(--amber); font-family:var(--mono); font-size:13px; margin-right:8px;}
 header .sub{color:var(--sub); font-size:12px;}
+.modebar{display:flex; gap:7px; align-items:center; flex-wrap:wrap; margin-bottom:14px; padding-bottom:12px; border-bottom:1px solid var(--line);}
+.modebar .mode-label{font:11px var(--mono); color:var(--faint); margin-right:3px;}
+.modebtn{background:#161b22; border:1px solid var(--line); color:var(--sub); padding:5px 10px; border-radius:7px; cursor:pointer; font:12px var(--sans);}
+.modebtn.on{color:var(--amber); border-color:var(--amber); background:#33240e;}
+.basic-box{background:linear-gradient(145deg,#202933,#191e25); border:1px solid #3b5261; border-radius:10px; padding:12px; margin-bottom:14px;}
+.basic-box h2{font-size:14px; color:var(--cyan); margin-bottom:4px;}.basic-box p{color:var(--sub);font-size:11px;margin-bottom:10px;}
+.basic-result{font:11px var(--mono);color:var(--faint);margin-top:9px;}
+body.pro-mode #basicPanel{display:none;}
+body.basic-mode #parts>.stage{display:none;}
+body.basic-mode .pro-only{display:none!important;}
+.diagnostics{border:1px solid var(--line); border-radius:9px; background:#161b21; padding:9px 10px; font-size:11px; margin:8px 0 12px;}
+.diagnostics h3{font:11px var(--mono);color:var(--cyan);letter-spacing:.06em;margin-bottom:4px;}.diag-ok{color:var(--tracer)}.diag-warn{color:var(--amber)}.diag-danger{color:var(--red)}
+.calibration{background:#172127; border:1px solid #2e5660; border-radius:8px; padding:9px; margin-top:9px;}.calibration h4{font:11px var(--mono);color:var(--cyan);margin-bottom:4px;}.calibration .rowline{margin-top:4px;}
+.viewtoggle{float:right; margin-top:-4px;}
 
 .wrap{display:grid; grid-template-columns:400px 1fr; gap:18px; padding:18px; max-width:1500px; margin:0 auto;}
 @media(max-width:980px){ .wrap{grid-template-columns:1fr;} }
@@ -90,6 +104,16 @@ h2.sec:first-child{margin-top:0;}
 /* ---- schematic ---- */
 .schembox{background:#111419; border:1px solid var(--line); border-radius:10px; padding:8px 10px 4px; overflow-x:auto;}
 .schembox svg{display:block; min-width:640px; width:100%; height:auto;}
+.schembox svg.is-firing .moving-piston{animation:piston-cycle var(--shot-ms,260ms) cubic-bezier(.2,.85,.28,1) both;}
+.schembox svg.is-firing .moving-sector{animation:gear-cycle var(--shot-ms,260ms) linear both; transform-origin:var(--sec-x) var(--sec-y);}
+.schembox svg.is-firing .moving-spur{animation:gear-cycle var(--shot-ms,260ms) linear both; transform-origin:var(--spur-x) var(--spur-y);}
+.schembox svg.is-firing .moving-bevel{animation:gear-cycle var(--shot-ms,260ms) linear both; transform-origin:var(--bev-x) var(--bev-y);}
+.schembox svg.is-firing .air-pulse{animation:air-pulse var(--shot-ms,260ms) ease-out both;}
+.schembox svg.is-firing .bb-shot{animation:bb-shot var(--shot-ms,260ms) cubic-bezier(.14,.72,.3,1) both;}
+@keyframes piston-cycle{0%{transform:translateX(0)}42%{transform:translateX(-118px)}70%{transform:translateX(-118px)}100%{transform:translateX(0)}}
+@keyframes gear-cycle{to{transform:rotate(360deg)}}
+@keyframes air-pulse{0%,58%{opacity:.16}75%{opacity:.95}100%{opacity:.25}}
+@keyframes bb-shot{0%,65%{transform:translateX(0);opacity:1}100%{transform:translateX(250px);opacity:0}}
 .schem-cap{display:flex; gap:14px; flex-wrap:wrap; color:var(--faint); font-size:11px; padding:4px 2px 6px; font-family:var(--mono);}
 .schem-cap i{display:inline-block; width:14px; height:0; border-top:3px solid; margin-right:4px; vertical-align:middle;}
 
@@ -111,6 +135,9 @@ button.fire{
 }
 button.fire:hover{background:#4a3413;}
 button.fire:focus-visible{outline:2px solid var(--cyan); outline-offset:2px;}
+.presetline{display:flex; gap:7px; flex-wrap:wrap; margin:0 0 12px;}
+.presetline .mini{padding:5px 9px;}
+.audit{font-size:11px; color:var(--sub); border-left:3px solid var(--cyan); padding:6px 9px; background:#172127; margin:8px 0 13px;}
 
 .customrow{display:none; margin-top:8px; padding:8px; background:#181d24; border:1px dashed var(--amber-dim);
   border-radius:8px; grid-template-columns:repeat(auto-fill,minmax(118px,1fr)); gap:8px;}
@@ -124,9 +151,19 @@ button.mini{background:var(--panel2); border:1px solid var(--line); color:var(--
 button.mini:hover{border-color:var(--amber-dim); color:var(--txt);}
 footer{padding:14px 24px 28px; color:var(--faint); font-size:11px; line-height:1.7;}
 @media (prefers-reduced-motion: reduce){ *{transition:none !important; animation:none !important;} }
+@media(max-width:640px){
+  body{font-size:13px;} header{padding:14px 15px 12px;} header h1{font-size:17px;}
+  .wrap{padding:10px;gap:10px}.panel{padding:12px;border-radius:10px}.stage{margin-bottom:14px;}
+  .results{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.card{padding:8px}.card .v{font-size:18px;}
+  .schembox{padding:4px; margin:0 -3px;}.schembox svg{min-width:590px;}
+  .fireline button.fire{width:100%;padding:11px 14px}.chips{gap:5px}.chip{padding:4px 9px;font-size:11px;}
+  .customrow{grid-template-columns:repeat(2,minmax(0,1fr));}.customrow input{min-width:0;width:100%;}
+  canvas.chart{height:auto;} footer{padding:12px 15px 24px;}.tblwrap{margin:0 -4px;}
+  .modebar{margin-bottom:10px}.modebtn{flex:1}.basic-box{padding:10px;}
+}
 </style>
 </head>
-<body>
+<body class="basic-mode">
 
 <header>
   <h1><span class="tag">AEG-LAB</span>電動ガン カスタムシミュレーター</h1>
@@ -136,6 +173,24 @@ footer{padding:14px 24px 28px; color:var(--faint); font-size:11px; line-height:1
 <div class="wrap">
 <!-- ================= 左: パーツ選択 ================= -->
 <div class="panel" id="parts">
+  <div class="modebar" role="tablist" aria-label="操作モード">
+    <span class="mode-label">MODE</span>
+    <button class="modebtn on" id="basicModeBtn" role="tab" aria-selected="true">一般版 — かんたん設定</button>
+    <button class="modebtn" id="proModeBtn" role="tab" aria-selected="false">プロ版 — カスタム／校正</button>
+  </div>
+  <div class="basic-box" id="basicPanel">
+    <h2>かんたんシミュレート</h2>
+    <p>用途を選ぶだけで、一般的な構成を読み込みます。細かな定数はプロ版で扱います。</p>
+    <label class="head" for="basicSetup">目標・用途</label>
+    <select id="basicSetup">
+      <option value="stock">標準電動ガン（安定・扱いやすさ）</option>
+      <option value="hc">ハイサイクル（純正HC近似）</option>
+      <option value="cqb">CQB（短銃身・低負荷）</option>
+      <option value="outdoor">屋外（重量弾・中距離）</option>
+    </select>
+    <div class="fireline"><button class="fire" id="basicFireBtn">▶ この構成でシミュレート</button></div>
+    <div class="basic-result" id="basicResult">詳細な補正・安全診断・実測校正は「プロ版」で利用できます。</div>
+  </div>
 
   <div class="stage">
     <h3>STAGE 1 <span class="jp">駆動・電気系</span></h3>
@@ -145,6 +200,8 @@ footer{padding:14px 24px 28px; color:var(--faint); font-size:11px; line-height:1
       <div class="customrow" id="battCustom">
         <label>電圧 [V]<input type="number" step="0.1" min="1" data-c="batt.V"></label>
         <label>内部抵抗 [mΩ]<input type="number" step="1" min="0" data-c="batt.Rm"></label>
+        <label>容量 [mAh]<input type="number" step="50" min="100" data-c="batt.capMah"></label>
+        <label>連続放電 [C]<input type="number" step="1" min="1" data-c="batt.C"></label>
       </div>
     </div>
     <div class="ctrl">
@@ -152,10 +209,12 @@ footer{padding:14px 24px 28px; color:var(--faint); font-size:11px; line-height:1
       <select id="motorSel"></select>
       <div class="note" id="motorNote"></div>
       <div class="customrow" id="motorCustom">
-        <label>無負荷回転数 [rpm]@8.4V<input type="number" step="500" min="1000" data-c="motor.n0"></label>
-        <label>失速トルク [N·m]@8.4V<input type="number" step="0.005" min="0.01" data-c="motor.Ts"></label>
+        <label>無負荷回転数 [rpm]@8.4V換算<input type="number" step="500" min="1000" data-c="motor.n0"></label>
+        <label>失速トルク [N·m]@8.4V換算<input type="number" step="0.005" min="0.01" data-c="motor.Ts"></label>
         <label>無負荷電流 [A]<input type="number" step="0.1" min="0" data-c="motor.I0"></label>
         <label>失速電流 [A]@8.4V<input type="number" step="1" min="1" data-c="motor.Ist"></label>
+        <label>ESC電流上限 [A]（BLDC）<input type="number" step="1" min="1" data-c="motor.escA"></label>
+        <label>種別<select id="motorKind"><option value="brushed">ブラシ付き</option><option value="brushless">ブラシレス</option></select></label>
       </div>
     </div>
     <div class="ctrl">
@@ -177,6 +236,14 @@ footer{padding:14px 24px 28px; color:var(--faint); font-size:11px; line-height:1
       </div>
     </div>
     <div class="ctrl">
+      <label class="head">セクター構成 <span class="val" id="sectorVal"></span></label>
+      <div class="chips" id="sectorChips">
+        <button class="chip on" data-sector="ssg">SSG（1発/回転）</button>
+        <button class="chip" data-sector="dsg">DSG（2発/回転）</button>
+      </div>
+      <div class="note">DSGは1回転あたりのコッキング回数を2回として、負荷・発射サイクルの双方を補正します。</div>
+    </div>
+    <div class="ctrl">
       <label class="head">メインスプリング <span class="val" id="springVal"></span></label>
       <div class="chips" id="springChips"></div>
       <div class="customrow" id="springCustom">
@@ -194,6 +261,16 @@ footer{padding:14px 24px 28px; color:var(--faint); font-size:11px; line-height:1
       <div class="rowline"><span class="lbl">直接入力</span><input type="number" id="pistonNum" min="1" max="200" step="0.5" value="20"><span class="lbl">g</span></div>
       <div class="note">軽量ピストン=ピストンスピード↑・サイクル追従↑ / 重量ピストン=打撃感・初速微増(重量弾時)。</div>
     </div>
+    <div class="ctrl">
+      <label class="head">ショートストローク (歯数カット) <span class="val" id="teethVal"></span></label>
+      <div class="chips" id="teethChips"></div>
+      <div class="note">セクター/ピストンラックの歯数カット。1歯≈4.8mmストローク減。圧縮量・サイクル負荷・容積が同時に変化します。</div>
+    </div>
+    <div class="ctrl">
+      <label class="head">AOE調整 (ヘッドパッド厚) <span class="val"><span id="aoeVal">0.0</span><em>mm</em></span></label>
+      <input type="range" id="aoeRange" min="0" max="8" step="0.5" value="0">
+      <div class="note">ソルボ等のパッドでピストン打撃角を適正化。物理的にはストローク減+死容積減として作用(耐久性向上は本シミュレーション対象外)。実効ストローク: <span id="strokeEffNote" style="color:var(--amber)">72.0mm</span></div>
+    </div>
   </div>
 
   <div class="stage">
@@ -205,6 +282,12 @@ footer{padding:14px 24px 28px; color:var(--faint); font-size:11px; line-height:1
       <div class="customrow" id="cylCustom">
         <label>有効圧縮ストローク [%]<input type="number" step="1" min="5" max="100" data-c="cyl.effPct"></label>
       </div>
+    </div>
+    <div class="ctrl">
+      <label class="head">ノズル/流路オリフィス径 <span class="val"><span id="nozzleVal">4.30</span><em>mm</em></span></label>
+      <div class="chips" id="nozzleChips"></div>
+      <div class="rowline"><span class="lbl">直接入力</span><input type="number" id="nozzleNum" min="0.5" max="8" step="0.05" value="4.3"><span class="lbl">mm</span></div>
+      <div class="note">流速チューンの核。絞るとチョーク流れで空気供給が音速制限され、バレル内で長く押し続ける特性に変化 → 重量弾でエネルギー増(ジュールクリープ)。</div>
     </div>
     <div class="ctrl">
       <label class="head">インナーバレル長 <span class="val"><span id="barrelVal">300</span><em>mm</em></span></label>
@@ -276,6 +359,10 @@ footer{padding:14px 24px 28px; color:var(--faint); font-size:11px; line-height:1
         <label>BBバレル摩擦 [N]<input type="number" step="0.01" min="0" data-p="fricBB"></label>
         <label>ギア伝達効率 [0-1]<input type="number" step="0.01" min="0.05" max="1" data-p="gearEff"></label>
         <label>漏れ係数 Cd [0-1]<input type="number" step="0.02" min="0" max="1" data-p="leakCd"></label>
+        <label>ノズル流路 Cd [0-1]<input type="number" step="0.02" min="0" max="1" data-p="nozzleCd"></label>
+        <label>吸気オリフィス径 [mm]<input type="number" step="0.5" min="0.5" data-p="intakeDMM"></label>
+        <label>ホップ室容積 [cm³]<input type="number" step="0.02" min="0.01" data-p="hopVcc"></label>
+        <label>ピストンヘッド弁効率 [0-1]<input type="number" step="0.05" min="0" max="1" data-p="ventEff"></label>
         <label>空気密度 [kg/m³]<input type="number" step="0.005" min="0.1" data-p="rho0"></label>
       </div>
       <div class="rowline"><button class="mini" id="physReset">デフォルトに戻す</button>
@@ -288,7 +375,7 @@ footer{padding:14px 24px 28px; color:var(--faint); font-size:11px; line-height:1
 <!-- ================= 右: 結果 ================= -->
 <div class="panel" id="out">
 
-  <h2 class="sec">GEARBOX CROSS-SECTION — 構成図 (パーツ連動)</h2>
+  <h2 class="sec">VER.2 GEARBOX — 構成図 (パーツ連動)<button class="mini viewtoggle" id="viewToggle">立体断面</button></h2>
   <div class="schembox">
     <svg id="schem" viewBox="0 0 960 400" xmlns="http://www.w3.org/2000/svg" aria-label="メカボックス断面図"></svg>
   </div>
@@ -302,27 +389,40 @@ footer{padding:14px 24px 28px; color:var(--faint); font-size:11px; line-height:1
   <h2 class="sec">RESULTS — 計算結果</h2>
   <div class="results" id="cards"></div>
 
-  <div class="fireline"><button class="fire" id="fireBtn">▶ 発射 (再計算)</button></div>
+  <div class="audit pro-only" id="auditNote">実機照合: 未選択</div>
+  <div class="diagnostics pro-only" id="diagnostics"></div>
+  <div class="calibration pro-only">
+    <h4>実測校正（プロ版）</h4>
+    <div class="rowline"><span class="lbl">実測初速</span><input id="calV" type="number" min="1" step="0.1" placeholder="m/s"><span class="lbl">m/s</span><span class="lbl">実測RPS</span><input id="calRps" type="number" min="1" step="0.1" placeholder="rps"><span class="lbl">rps</span><button class="mini" id="calibrateBtn">この実測値で校正</button><button class="mini" id="calResetBtn">校正解除</button></div>
+    <div class="note" id="calNote">使用BB、ホップ量、気温、バッテリー状態を揃えた実測値で補正してください。計算値は実射の代替ではありません。</div>
+  </div>
+  <div class="presetline pro-only">
+    <button class="mini" id="presetHc">マルイ HC 近似</button>
+    <button class="mini" id="presetDsg">DSG 基準</button>
+    <button class="mini" id="presetRyu">流速 基準</button>
+  </div>
+  <div class="fireline pro-only"><button class="fire" id="fireBtn">▶ 発射・動作を再生</button></div>
 
-  <h2 class="sec">STAGE 2-3 — メカボックス内部 (時間 vs ピストン位置・圧力・BB弾速)</h2>
-  <canvas id="internalChart" class="chart" width="1100" height="300"></canvas>
-  <div class="legend">
+  <h2 class="sec pro-only">STAGE 2-3 — メカボックス内部 (時間 vs ピストン位置・圧力・BB弾速)</h2>
+  <canvas id="internalChart" class="chart pro-only" width="1100" height="300"></canvas>
+  <div class="legend pro-only">
     <span><i style="border-color:var(--amber)"></i>ピストン位置</span>
     <span><i style="border-color:var(--cyan)"></i>シリンダー内圧 (ゲージ圧)</span>
+    <span><i style="border-color:#4aa3e0"></i>バレル内圧 (BB後方)</span>
     <span><i style="border-color:var(--tracer)"></i>BB弾速</span>
     <span><i style="border-color:#8892a0; border-top-style:dashed;"></i>BB弾 銃口通過</span>
   </div>
 
-  <h2 class="sec">STAGE 4 — 弾道グラフ (高さ:距離 = 1:10 表示)</h2>
-  <canvas id="trajChart" class="chart" width="1100" height="340"></canvas>
-  <div class="legend">
+  <h2 class="sec pro-only">STAGE 4 — 弾道グラフ (高さ:距離 = 1:10 表示)</h2>
+  <canvas id="trajChart" class="chart pro-only" width="1100" height="340"></canvas>
+  <div class="legend pro-only">
     <span><i style="border-color:var(--tracer)"></i>ホップ弾道</span>
     <span><i style="border-color:#5a6a70; border-top-style:dashed;"></i>ホップ回転0</span>
     <span><i style="border-color:#3a4a50; border-top-style:dotted;"></i>射線</span>
   </div>
 
-  <h2 class="sec">距離ごとの弾速・エネルギー減衰</h2>
-  <div class="tblwrap">
+  <h2 class="sec pro-only">距離ごとの弾速・エネルギー減衰</h2>
+  <div class="tblwrap pro-only">
     <table>
       <thead><tr><th>距離</th><th>通過時間 [s]</th><th>高さ [m]</th><th>弾速 [m/s]</th><th>エネルギー [J]</th></tr></thead>
       <tbody id="tblBody"></tbody>
@@ -335,35 +435,41 @@ footer{padding:14px 24px 28px; color:var(--faint); font-size:11px; line-height:1
 <footer>
   内部弾道(Stage2-3)は断熱圧縮+集中容積モデル(質量追跡・BB-バレル間ブローバイ漏れ考慮)、外部弾道(Stage4)は
   Morrison/Loth抗力係数・マグヌス揚力(Cl=0.12)・回転減衰(Cf=1.328/√Re)による数値積分(dt=10⁻⁴s)。
-  モーター・スプリング等の物性値は代表的な市販パーツの近似値であり、実銃の初速・サイクルを保証するものではありません。
-  実射確認はクロノグラフで行い、銃口エネルギー0.98J以下(日本国内法)を厳守してください。
+  モーター・スプリング等の物性値は代表的な近似値です。プロ版の実測校正は同一BB・ホップ・気温・バッテリー状態で行い、気密・給弾・PME・FET/ESC温度は必ず実機で点検してください。
+  本ツールは設計比較・事前診断用であり、初速・サイクル・耐久性を保証しません。実射確認はクロノグラフで行い、重量弾を含め銃口エネルギー0.98J以下(日本国内法)とフィールド規定を厳守してください。
 </footer>
 
 <script>
 /* ============================================================
-   AEG CUSTOM SIMULATOR
-   Stage1: 電気・機械力学 (サイクル)   Stage2: ピストン運動・断熱圧縮
-   Stage3: バレル内弾道 (初速)         Stage4: 外部弾道 (マグヌス効果)
+   AEG CUSTOM SIMULATOR — physics core v3
+   Stage1: サイクル (+吸気負圧損失)
+   Stage2+3: 2室モデル (シリンダー⇄ノズルオリフィス⇄バレル)
+             サン=ヴナン圧縮性流れ・チョーク限界・エネルギー保存
    ============================================================ */
 
 /* ---------------- パーツプリセット ---------------- */
 const DATA = {
   batteries: [
-    {id:"nimh84",  name:"NiMH 8.4V",   V:8.4,  R:0.030},
-    {id:"lipo74",  name:"LiPo 7.4V",   V:7.4,  R:0.014},
-    {id:"lipo111", name:"LiPo 11.1V",  V:11.1, R:0.018},
-    {id:"lipo148", name:"LiPo 14.8V",  V:14.8, R:0.022},
+    {id:"nimh84",  name:"NiMH 8.4V",   V:8.4,  R:0.030, capAh:1.3, C:12},
+    {id:"lipo74",  name:"LiPo 7.4V",   V:7.4,  R:0.014, capAh:1.2, C:20},
+    {id:"lipo111", name:"LiPo 11.1V",  V:11.1, R:0.018, capAh:1.2, C:20},
+    {id:"lipo148", name:"LiPo 14.8V",  V:14.8, R:0.022, capAh:1.3, C:25},
   ],
-  // n0: 無負荷回転数[rpm]@8.4V, Ts: 失速トルク[N·m]@8.4V, I0: 無負荷電流[A], Ist: 失速電流[A]@8.4V
   motors: [
-    {id:"std",    name:"スタンダード (EG1000級)",     n0:25000, Ts:0.110, I0:1.6, Ist:58,
+    {id:"std",    name:"スタンダード (EG1000級)",     n0:25000, Ts:0.110, I0:1.6, Ist:58, kind:"brushed",
       note:"バランス型。純正相当の万能モーター。"},
-    {id:"ht",     name:"ハイトルク (ネオジム)",        n0:19500, Ts:0.165, I0:1.8, Ist:56,
+    {id:"ht",     name:"ハイトルク (ネオジム)",        n0:19500, Ts:0.165, I0:1.8, Ist:56, kind:"brushed",
       note:"強磁力でトルク重視。硬いスプリングや重ギア比向き。レスポンス◎。"},
-    {id:"hs",     name:"ハイスピード",                 n0:33000, Ts:0.085, I0:2.2, Ist:72,
+    {id:"hs",     name:"ハイスピード",                 n0:33000, Ts:0.085, I0:2.2, Ist:72, kind:"brushed",
       note:"回転数特化。軽いスプリング+ハイスピードギアで高サイクル向き。"},
-    {id:"cobalt", name:"サマリウムコバルト (最強磁力)", n0:23500, Ts:0.190, I0:1.7, Ist:60,
+    {id:"cobalt", name:"サマリウムコバルト (最強磁力)", n0:23500, Ts:0.190, I0:1.7, Ist:60, kind:"brushed",
       note:"トルクと回転数を両立するハイエンド。"},
+    {id:"eg30000",name:"東京マルイ EG30000 相当",       n0:30000, Ts:0.110, I0:1.8, Ist:62, kind:"brushed",
+      note:"ハイサイクル純正モーターの近似。実機の個体差・電池状態は別途補正が必要。"},
+    {id:"bl28",   name:"ブラシレス 28K（11.1V）",       n0:21382, Ts:0.185, I0:1.2, Ist:38, kind:"brushless", ratedV:11.1, escA:40,
+      note:"11.1Vで28,000rpm級を8.4V基準へ換算。ESC保護・効率を含む代表値。"},
+    {id:"bl39",   name:"ブラシレス 39K（11.1V）",       n0:29782, Ts:0.205, I0:1.4, Ist:42, kind:"brushless", ratedV:11.1, escA:45,
+      note:"T238 39K級の近似。ブラシレスは対応ETU/ESC・電圧上限を必ず確認。"},
   ],
   wires: [
     {id:"stock", name:"純正配線+スイッチ", R:0.055},
@@ -403,18 +509,26 @@ const DATA = {
     {id:"b623", name:"6.23 ルーズ", d:6.23e-3},
   ],
   bbs: [0.20, 0.23, 0.25, 0.28, 0.30, 0.36, 0.43],
+  nozzles: [
+    {id:"n43", name:"4.3 標準", d:4.3e-3},
+    {id:"n38", name:"3.8",      d:3.8e-3},
+    {id:"n32", name:"3.2 絞り", d:3.2e-3},
+    {id:"n26", name:"2.6 流速", d:2.6e-3},
+  ],
+  teeth: [0,1,2,3,4,5,6,7,8],
 };
 
 /* ---------------- 状態 ---------------- */
 const state = {
-  batt:"lipo74", motor:"std", wire:"stock",
-  gear:"g18", spring:"m100", bearing:false, pistonG:20,
-  cyl:"c45", barrelMM:300, bore:"b608", bbG:0.20,
+  batt:"nimh84", motor:"std", wire:"stock",
+  gear:"g18", spring:"m90", bearing:false, pistonG:20,
+  teethCut:0, aoePadMM:0, sector:"ssg",
+  cyl:"c34", barrelMM:300, bore:"b608", bbG:0.20, nozzleD:4.3e-3,
   hopMode:"auto", spinManual:200, h0:1.0, angleDeg:0, drag:"loth",
-  // カスタム値 (on=true でプリセットの代わりに使用)
+  view3d:true, calibration:{vScale:1, rScale:1, active:false},
   custom: {
-    batt:  {on:false, V:7.4,  R:0.014},
-    motor: {on:false, n0:25000, Ts:0.110, I0:1.6, Ist:58},
+    batt:  {on:false, V:7.4,  R:0.014, capAh:1.2, C:20},
+    motor: {on:false, n0:25000, Ts:0.110, I0:1.6, Ist:58, kind:"brushed", escA:40, ratedV:8.4},
     wire:  {on:false, R:0.030},
     gear:  {on:false, ratio:18.0},
     spring:{on:false, k:415},
@@ -426,22 +540,42 @@ const state = {
 
 /* ---------------- 物理定数 (詳細パネルから編集可) ---------------- */
 const PHYS_DEFAULT = {
-  P0:101325, rho0:1.205, gamma:1.4, g:9.80665,
-  strokeM:0.072,          // ピストン全ストローク [m]
+  P0:101325, rho0:1.205, T0:293, gamma:1.4, g:9.80665,
+  strokeM:0.072,          // ピストン全ストローク(フル) [m]
+  rackTeeth:16,           // ピストンラック標準歯数 (3歯カット=13.5mm換算用)
   cylBore:23.8e-3,        // シリンダー内径 [m]
-  deadV:0.5e-6,           // ノズル・チャンバー死容積 [m^3]
+  deadV:0.35e-6,          // シリンダーヘッド〜ノズル死容積 [m^3]
+  hopVcc:0.15e-6,         // ホップ室(バレル側)死容積 [m^3]
   preloadM:0.030,         // スプリング組込プリロード [m]
   bbChamberM:0.020,       // BB初期位置(チャンバー内) [m]
   fricPiston:6.0,         // ピストンOリング摩擦 [N]
   fricBB:0.05,            // バレル内BB摩擦 [N]
   hopHold:1.6,            // ホップパッキン保持力 [N]
   gearEff:0.68,           // ギア伝達効率
-  leakCd:0.62,            // ブローバイ漏れオリフィス係数
+  leakCd:0.62,            // BB隙間ブローバイ Cd
+  nozzleCd:0.80,          // ノズル流路 Cd
+  intakeD:8.0e-3,         // コッキング時吸気 実効オリフィス径 [m]
+  ventEff:0.85,           // ピストンヘッド一方向弁(吸排気)効率 [0-1]
 };
 const PHYS = {...PHYS_DEFAULT};
 function resetPhys(){ Object.assign(PHYS, PHYS_DEFAULT); }
 
-/* ---------------- アクセサ (プリセット or カスタム) ---------------- */
+/* 気体定数 */
+const GAS = { R:287.05, gam:1.4 };
+GAS.cv = GAS.R/(GAS.gam-1);
+GAS.cp = GAS.gam*GAS.R/(GAS.gam-1);
+GAS.critPR = Math.pow(2/(GAS.gam+1), GAS.gam/(GAS.gam-1));   // 臨界圧力比 0.528 (上流基準1.893)
+
+/* サン=ヴナン式 質量流量 [kg/s] (Pd/Pu ≤ 0.528 でチョーク=音速頭打ち) */
+function mdotOrifice(Pu, Tu, Pd, A, Cd){
+  if (A<=0 || Pu<=Pd || Tu<=0) return 0;
+  const pr = Math.max(Pd/Pu, GAS.critPR);
+  const g = GAS.gam;
+  const term = (2*g/((g-1)*GAS.R*Tu)) * (Math.pow(pr,2/g) - Math.pow(pr,(g+1)/g));
+  return Cd*A*Pu*Math.sqrt(Math.max(term,0));
+}
+
+/* ---------------- アクセサ ---------------- */
 const _find = (arr,id)=>arr.find(o=>o.id===id);
 const curBatt   = ()=> state.custom.batt.on   ? {name:"カスタム", ...state.custom.batt} : _find(DATA.batteries,state.batt);
 const curMotor  = ()=> state.custom.motor.on  ? {name:"カスタム", note:"任意値", ...state.custom.motor} : _find(DATA.motors,state.motor);
@@ -455,102 +589,185 @@ const curBBd    = ()=> state.custom.bb.on ? state.custom.bb.d : 5.95e-3;
 const Acyl = ()=> Math.PI*(PHYS.cylBore/2)**2;
 const Abb  = ()=> Math.PI*(curBBd()/2)**2;
 
+/* ショートストローク量 [m] = 歯数カット + AOEパッド厚 */
+const shortStrokeM = ()=> state.teethCut*(PHYS.strokeM/PHYS.rackTeeth) + state.aoePadMM*1e-3;
+const strokeEff = ()=> Math.max(0.005, PHYS.strokeM - shortStrokeM());
+const shotsPerRev = ()=> state.sector==="dsg" ? 2 : 1;
+
 /* ============================================================
-   STAGE 1: サイクル計算 (モーター負荷特性 + 電圧サグ反復)
+   STAGE 1: サイクル計算
+   モーター負荷特性 + 電圧サグ + コッキング時シリンダー負圧損失
    ============================================================ */
 function computeCycle(){
   const bat = curBatt(), mot = curMotor(), wr = curWire();
   const ratio = curGear().ratio;
+  const pulses = shotsPerRev();
   const k = curSpring().k;
   const pre = PHYS.preloadM + (state.bearing ? 0.002 : 0);
+  const S = strokeEff();
 
-  const c0 = pre, c1 = pre + PHYS.strokeM;
+  const c0 = pre, c1 = pre + S;
   const Espring = 0.5*k*(c1*c1 - c0*c0);
-  const Epull = Espring + PHYS.fricPiston*PHYS.strokeM;
-  const Tload = Epull / (2*Math.PI*ratio*PHYS.gearEff);
+  const AcylV = Acyl();
+  const Ain = Math.PI*(PHYS.intakeD/2)**2;
 
   const Rtot = bat.R + wr.R;
-  let V = bat.V, I = 5;
-  for(let i=0;i<12;i++){
-    V = bat.V - I*Rtot;
+  let V = bat.V, I = 5, cycleT = 0.08, vacP = 0, Evac = 0;
+
+  // 負圧損失はサイクルタイムに依存 → まとめて反復収束
+  for(let it=0; it<10; it++){
+    // コッキング(セクター引き)はサイクルの約1/2 → 平均後退速度
+    const vRet = S/(0.5*Math.max(cycleT,1e-3));
+    const Q = AcylV*vRet;                              // 必要吸気量 [m^3/s]
+    vacP = Math.min(0.5*PHYS.rho0*Math.pow(Q/(0.7*Math.max(Ain,1e-8)),2), 0.9*PHYS.P0);
+    Evac = 0.5*vacP*AcylV*S;                           // 平均負圧×体積 (三角近似)
+
+    const Epull = Espring + PHYS.fricPiston*S + Evac;
+    // DSG は1回転で2回コッキングするため、回転あたりの仕事量を倍にする。
+    const Tload = (Epull*pulses) / (2*Math.PI*ratio*PHYS.gearEff);
+
+    for(let i=0;i<8;i++){
+      V = bat.V - I*Rtot;
+      const sc = Math.max(V,0.1)/8.4;
+      const Ts = mot.Ts*sc, Ist = mot.Ist*sc;
+      I = mot.I0 + (Ist - mot.I0)*Math.min(1, Tload/Ts);
+    }
     const sc = Math.max(V,0.1)/8.4;
-    const Ts = mot.Ts*sc, Ist = mot.Ist*sc;
-    I = mot.I0 + (Ist - mot.I0)*Math.min(1, Tload/Ts);
+    const Ts = mot.Ts*sc;
+    if (Tload/Ts >= 0.95){
+      return {stall:true, Tload, Ts, V, I, Espring, vacKPa:vacP/1000};
+    }
+    const rpm = mot.n0*sc*(1 - Tload/Ts);
+    cycleT = ratio/(rpm/60);
   }
+
   const sc = Math.max(V,0.1)/8.4;
-  const n0 = mot.n0*sc, Ts = mot.Ts*sc;
-  const loadFrac = Tload/Ts;
-  if (loadFrac >= 0.95){
-    return {stall:true, Tload, Ts, V, I, Espring};
-  }
-  const rpm = n0*(1 - loadFrac);
-  const cycleT = ratio/(rpm/60);
+  const Ts = mot.Ts*sc;
+  const Epull = Espring + PHYS.fricPiston*S + Evac;
+  const Tload = (Epull*pulses)/(2*Math.PI*ratio*PHYS.gearEff);
   return {
     stall:false, Espring, Tload, Ts, V, I,
-    rpm, rof:1/cycleT, cycleMs:cycleT*1000,
-    responseMs:cycleT*1000*0.85,
+    rof:pulses/cycleT, cycleMs:cycleT*1000/pulses, responseMs:cycleT*1000*0.85,
+    vacKPa:vacP/1000, EvacJ:Evac,
   };
 }
 
 /* ============================================================
-   STAGE 2+3: ピストン運動・断熱圧縮・バレル内加速 (dt=1μs)
+   STAGE 2+3: 2室モデル内部弾道 (dt=1μs)
+   シリンダー室(Mc,Uc) --ノズルオリフィス(サン=ヴナン)--> バレル室(Mb,Ub)
+   バレル室 --BB隙間(サン=ヴナン)--> 大気
+   P=(γ-1)U/V, T=PV/(MR) でエネルギー整合
    ============================================================ */
-function simulateInternal(){
+function simulateInternal(opt){
+  opt = opt||{};
   const k = curSpring().k;
   const pre = PHYS.preloadM + (state.bearing ? 0.002 : 0);
   const eff = Math.min(1, Math.max(0.05, curCyl().eff));
   const boreD = curBore().d;
-  const AcylV = Acyl(), AbbV = Abb();
+  const AcylV = Acyl(), AbbV = (opt.bbD!==undefined)? Math.PI*(opt.bbD/2)**2 : Abb();
   const Abar = Math.PI*(boreD/2)**2;
   const Aleak = Math.max(0, Abar - AbbV);
+  const Anoz = Math.PI*(state.nozzleD/2)**2;
   const mP = Math.max(state.pistonG,0.5)*1e-3;
-  const mB = Math.max(curBBg(),0.001)*1e-3;
-  const S = PHYS.strokeM;
-  const freeS = S*(1-eff);
+  const mB = Math.max(opt.bbG!==undefined?opt.bbG:curBBg(), 0.001)*1e-3;
+  const S = strokeEff();
+  const compStroke = Math.min(S, eff*PHYS.strokeM);   // 有効圧縮ストローク
+  const freeS = S - compStroke;                        // ポート通過までの空走
   const LbEff = Math.max(0.01, state.barrelMM*1e-3 - PHYS.bbChamberM);
+  const {P0, T0} = {P0:PHYS.P0, T0:PHYS.T0};
+  const rho0 = P0/(GAS.R*T0);
 
-  const V0 = AcylV*S*eff + PHYS.deadV;
-  const M0 = PHYS.rho0*V0;
+  // 圧縮開始時の各室初期化用
+  const Vc0 = AcylV*compStroke + PHYS.deadV;
+  const Vb0f = xb => PHYS.hopVcc + Abar*xb;
 
-  let xp=0, vp=0;
+  let xp=0, vp=0, xpMax=0, xg=0;  // xpMax:最前進位置 xg:ガス境界(弁効率で後退追従が変化)
   let xb=0, vb=0, bbFree=false, bbExitT=null;
-  let M=M0;
+  let started=false;
+  let Mc=0, Uc=0, Mb=0, Ub=0;
+  let Pc=P0, Pb=P0, Tc=T0, Tb=T0;
+  let choked=false, chokedLeak=false;
   let t=0; const dt=1e-6;
   const log=[]; let lastLog=-1;
-  let Pmax=PHYS.P0;
+  let Pmax=P0;
 
-  while(t<0.08){
+  while(t<0.09){
     const compressing = xp>=freeS;
-    let P = PHYS.P0;
-    if (compressing){
-      const V = AcylV*(S-xp) + PHYS.deadV + Abar*xb;
-      const rho = M/Math.max(V,1e-9);
-      P = PHYS.P0*Math.pow(rho/PHYS.rho0, PHYS.gamma);
-      if(P>Pmax) Pmax=P;
-      if (P>PHYS.P0 && Aleak>0){
-        const mdot = PHYS.leakCd*Aleak*Math.sqrt(2*rho*(P-PHYS.P0));
-        M = Math.max(M - mdot*dt, 0.05*M0);
+    if (compressing && !started){
+      started=true; xpMax=xp; xg=xp;
+      Mc = P0*Vc0/(GAS.R*T0); Uc = Mc*GAS.cv*T0;
+      Mb = P0*Vb0f(0)/(GAS.R*T0); Ub = Mb*GAS.cv*T0;
+    }
+    // ピストンヘッド一方向弁: 最前進位置より後方では弁効率ventEff分だけ前室と縁切り
+    // ガス境界 xg = ventEff*xpMax + (1-ventEff)*xp  (ventEff=1:完全一方向 / 0:完全密閉ヘッド)
+    const behind = started && xp < xpMax - 1e-9;
+
+    if (started){
+      const Vc = AcylV*(S-xg) + PHYS.deadV;      // ガス境界は xg
+      const Vb = Vb0f(xb);
+      Pc = (GAS.gam-1)*Uc/Math.max(Vc,1e-10);
+      Pb = (GAS.gam-1)*Ub/Math.max(Vb,1e-10);
+      Tc = Pc*Vc/Math.max(Mc*GAS.R,1e-12);
+      Tb = Pb*Vb/Math.max(Mb*GAS.R,1e-12);
+      if(Pc>Pmax) Pmax=Pc;
+
+      // ノズル流れ (双方向・チョーク考慮)
+      if (Pc>Pb){
+        const md = mdotOrifice(Pc,Tc,Pb,Anoz,PHYS.nozzleCd);
+        if (Pb/Pc<=GAS.critPR) choked=true;
+        const dm = Math.min(md*dt, 0.25*Mc);
+        Mc-=dm; Uc-=dm*GAS.cp*Tc; Mb+=dm; Ub+=dm*GAS.cp*Tc;
+      } else if (Pb>Pc){
+        const md = mdotOrifice(Pb,Tb,Pc,Anoz,PHYS.nozzleCd);
+        const dm = Math.min(md*dt, 0.25*Mb);
+        Mb-=dm; Ub-=dm*GAS.cp*Tb; Mc+=dm; Uc+=dm*GAS.cp*Tb;
+      }
+      // BB隙間ブローバイ → 大気 (チョーク考慮)
+      if (Pb>P0 && Aleak>0){
+        const md = mdotOrifice(Pb,Tb,P0,Aleak,PHYS.leakCd);
+        if (P0/Pb<=GAS.critPR) chokedLeak=true;
+        const dm = Math.min(md*dt, 0.25*Mb);
+        Mb-=dm; Ub-=dm*GAS.cp*Tb;
       }
     }
 
+    // --- ピストン運動 ---
     const Fspring = k*(pre + S - xp);
-    const Fair = compressing ? (P-PHYS.P0)*AcylV : 0;
+    const couple = (started && behind) ? (1-PHYS.ventEff) : 1;   // 前室との結合率
+    const Fair = started ? (Pc-P0)*AcylV*couple : 0;
     const aP = (Fspring - Fair - Math.sign(vp||1)*PHYS.fricPiston)/mP;
+    const vpOld = vp;
     vp += aP*dt; xp += vp*dt;
     if (xp>=S){ xp=S; vp=0; }
     if (xp<0){ xp=0; vp=Math.max(0,vp); }
+    if (started){
+      if (xp>xpMax) xpMax=xp;
+      const xgNew = (xp>=xpMax) ? xp : PHYS.ventEff*xpMax + (1-PHYS.ventEff)*xp;
+      const dxg = xgNew - xg;
+      Uc += Pc*AcylV*dxg;                        // ガス境界移動によるピストン仕事
+      // 弁の開いた隙間を前進中は後方の常温空気を前室へポンプ (バウンスポンピング)
+      if (vp>0 && xp<xpMax-1e-9){
+        const dm = PHYS.rho0*AcylV*Math.max(vp*dt - dxg, 0)*PHYS.ventEff;
+        Mc += dm; Uc += dm*GAS.cp*PHYS.T0;
+      }
+      xg = xgNew;
+    }
 
-    const Fbb = (P-PHYS.P0)*AbbV;
+    // --- BB弾運動 ---
+    const Fbb = (Pb-P0)*AbbV;
     if (!bbFree && Fbb > PHYS.hopHold) bbFree=true;
     if (bbFree && bbExitT===null){
       const aB = (Fbb - PHYS.fricBB)/mB;
+      const vbOld = vb;
       vb = Math.max(0, vb + aB*dt);
       xb += vb*dt;
+      if (started) Ub -= Pb*Abar*((vbOld+vb)/2)*dt;   // 膨張仕事
+      if (Ub<1e-9) Ub=1e-9;
       if (xb>=LbEff){ bbExitT=t; }
     }
 
     if (t-lastLog>=2e-5){
-      log.push({t, xp:xp/S, Pg:(P-PHYS.P0)/1000, vb});
+      log.push({t, xp:xp/S, Pg:(Pc-P0)/1000, Pb:(Pb-P0)/1000, vb});
       lastLog=t;
     }
     if (bbExitT!==null && t>bbExitT+0.002) break;
@@ -561,10 +778,11 @@ function simulateInternal(){
   const Espring = 0.5*k*(c1*c1-c0*c0);
   const v0 = vb;
   const E0 = 0.5*mB*v0*v0;
-  const volRatio = (AcylV*S*eff) / (Abar*LbEff);
+  const volRatio = (AcylV*compStroke) / (Abar*LbEff);
   return {
-    v0, E0, log, bbExitT, Pmax,
+    v0, E0, log, bbExitT, Pmax, choked, chokedLeak,
     volRatio, Espring, effPct: Espring>0 ? 100*E0/Espring : 0,
+    strokeEffMM: S*1000, compStrokeMM: compStroke*1000,
   };
 }
 
@@ -705,10 +923,13 @@ function chips(el, items, cur, labelFn, onPick, customKey, customRowId){
 const C_MAP = {
   "batt.V":   v=>state.custom.batt.V = v,
   "batt.Rm":  v=>state.custom.batt.R = v/1000,
+  "batt.capMah":v=>state.custom.batt.capAh = v/1000,
+  "batt.C":   v=>state.custom.batt.C = v,
   "motor.n0": v=>state.custom.motor.n0 = v,
   "motor.Ts": v=>state.custom.motor.Ts = v,
   "motor.I0": v=>state.custom.motor.I0 = v,
   "motor.Ist":v=>state.custom.motor.Ist = v,
+  "motor.escA":v=>state.custom.motor.escA = v,
   "wire.Rm":  v=>state.custom.wire.R = v/1000,
   "gear.ratio":v=>state.custom.gear.ratio = v,
   "spring.k": v=>state.custom.spring.k = v,
@@ -720,10 +941,13 @@ const C_MAP = {
 const C_READ = {
   "batt.V":   ()=>state.custom.batt.V,
   "batt.Rm":  ()=>state.custom.batt.R*1000,
+  "batt.capMah":()=>state.custom.batt.capAh*1000,
+  "batt.C":   ()=>state.custom.batt.C,
   "motor.n0": ()=>state.custom.motor.n0,
   "motor.Ts": ()=>state.custom.motor.Ts,
   "motor.I0": ()=>state.custom.motor.I0,
   "motor.Ist":()=>state.custom.motor.Ist,
+  "motor.escA":()=>state.custom.motor.escA,
   "wire.Rm":  ()=>state.custom.wire.R*1000,
   "gear.ratio":()=>state.custom.gear.ratio,
   "spring.k": ()=>state.custom.spring.k,
@@ -742,6 +966,8 @@ function bindCustomInputs(){
       refreshVals(); recalcSoon();
     };
   });
+  $("motorKind").value=state.custom.motor.kind||"brushed";
+  $("motorKind").onchange=e=>{ state.custom.motor.kind=e.target.value; refreshVals(); recalcSoon(); };
 }
 
 /* 物理定数パネル <input data-p> ⇔ PHYS */
@@ -756,6 +982,10 @@ const P_MAP = {
   gearEff:   {get:()=>PHYS.gearEff,       set:v=>PHYS.gearEff=v},
   leakCd:    {get:()=>PHYS.leakCd,        set:v=>PHYS.leakCd=v},
   rho0:      {get:()=>PHYS.rho0,          set:v=>PHYS.rho0=v},
+  nozzleCd:  {get:()=>PHYS.nozzleCd,      set:v=>PHYS.nozzleCd=v},
+  intakeDMM: {get:()=>PHYS.intakeD*1000,  set:v=>PHYS.intakeD=v/1000},
+  hopVcc:    {get:()=>PHYS.hopVcc*1e6,    set:v=>PHYS.hopVcc=v*1e-6},
+  ventEff:   {get:()=>PHYS.ventEff,       set:v=>PHYS.ventEff=v},
 };
 function loadPhysInputs(){
   document.querySelectorAll("input[data-p]").forEach(inp=>{
@@ -776,12 +1006,15 @@ function bindPhysInputs(){
 
 /* ---- 値ラベル更新 ---- */
 function refreshVals(){
-  $("battVal").textContent = curBatt().V.toFixed(1)+"V / "+(curBatt().R*1000).toFixed(0)+"mΩ";
+  const batt=curBatt();
+  $("battVal").textContent = batt.V.toFixed(1)+"V / "+(batt.R*1000).toFixed(0)+"mΩ / "+((batt.capAh||1)*(batt.C||10)).toFixed(0)+"A目安";
   const mot=curMotor();
   $("motorVal").textContent = (mot.n0/1000).toFixed(0)+"krpm/"+mot.Ts.toFixed(2)+"N·m";
-  $("motorNote").textContent = (mot.note||"")+" (無負荷"+Math.round(mot.n0).toLocaleString()+"rpm・失速トルク"+mot.Ts+"N·m @8.4V)";
+  const motorBasis=mot.kind==="brushless" ? ` / BLDC・定格${mot.ratedV||11.1}V・ESC目安${mot.escA||"—"}A` : " / ブラシ付き・8.4V換算";
+  $("motorNote").textContent = (mot.note||"")+" (無負荷"+Math.round(mot.n0).toLocaleString()+"rpm・失速トルク"+mot.Ts+"N·m"+motorBasis+")";
   $("wireVal").textContent = (curWire().R*1000).toFixed(0)+"mΩ";
   $("gearVal").textContent = curGear().ratio+":1";
+  $("sectorVal").textContent = state.sector==="dsg" ? "2発/回転" : "1発/回転";
   $("springVal").textContent = "k="+curSpring().k+"N/m";
   const cyl=curCyl();
   $("cylVal").textContent = "有効"+(cyl.eff*100).toFixed(0)+"%";
@@ -789,6 +1022,10 @@ function refreshVals(){
   $("boreVal").textContent = curBore().name+"mm";
   $("bbVal").textContent = curBBg().toFixed(2);
   $("barrelVal").textContent = state.barrelMM;
+  $("teethVal").textContent = state.teethCut===0 ? "なし" : "-"+state.teethCut+"歯 ("+(state.teethCut*PHYS.strokeM/PHYS.rackTeeth*1000).toFixed(1)+"mm)";
+  $("aoeVal").textContent = state.aoePadMM.toFixed(1);
+  $("strokeEffNote").textContent = (strokeEff()*1000).toFixed(1)+"mm";
+  $("nozzleVal").textContent = (state.nozzleD*1000).toFixed(2);
 }
 
 function buildAll(){
@@ -813,6 +1050,9 @@ function buildAll(){
         b=>{ state.barrelMM=b; $("barrelRange").value=b; $("barrelNum").value=b; });
   chips($("boreChips"), DATA.bores, state.bore, b=>b.name, b=>state.bore=b.id, "bore", "boreCustom");
   chips($("bbChips"), DATA.bbs, state.bbG, b=>b.toFixed(2)+"g", b=>state.bbG=b, "bb", "bbCustom");
+  chips($("teethChips"), DATA.teeth, state.teethCut, n=>n===0?"標準":"-"+n+"歯", n=>state.teethCut=n);
+  chips($("nozzleChips"), DATA.nozzles, state.nozzleD===4.3e-3?"n43":state.nozzleD===3.8e-3?"n38":state.nozzleD===3.2e-3?"n32":state.nozzleD===2.6e-3?"n26":"__none",
+        n=>n.name, n=>{ state.nozzleD=n.d; $("nozzleNum").value=(n.d*1000).toFixed(2); });
 
   bindCustomInputs();
   refreshVals();
@@ -833,9 +1073,24 @@ function bind(){
   $("h0Range").oninput = e=>{ state.h0=+e.target.value; $("h0Val").textContent=state.h0.toFixed(1); recalcSoon(); };
   $("angRange").oninput = e=>{ state.angleDeg=+e.target.value; $("angVal").textContent=state.angleDeg.toFixed(1); recalcSoon(); };
   $("dragModel").onchange = e=>{ state.drag=e.target.value; recalc(); };
+  $("aoeRange").oninput = e=>{ state.aoePadMM=+e.target.value; refreshVals(); recalcSoon(); };
+  $("nozzleNum").oninput = e=>{ const v=+e.target.value; if(v>=0.5){ state.nozzleD=v*1e-3; buildAll(); recalcSoon(); } };
   $("spinRange").oninput = e=>{ state.spinManual=+e.target.value; $("spinNum").value=state.spinManual; recalcSoon(); };
   $("spinNum").oninput = e=>{ const v=+e.target.value; if(v>=0){ state.spinManual=v; $("spinRange").value=Math.min(v,800); recalcSoon(); } };
-  $("fireBtn").onclick = ()=>recalc();
+  $("fireBtn").onclick = ()=>playShot();
+  document.querySelectorAll("#sectorChips .chip").forEach(b=>{
+    b.onclick=()=>{ state.sector=b.dataset.sector; document.querySelectorAll("#sectorChips .chip").forEach(x=>x.classList.toggle("on",x===b)); refreshVals(); recalc(); };
+  });
+  $("presetHc").onclick=()=>applyPreset("hc");
+  $("presetDsg").onclick=()=>applyPreset("dsg");
+  $("presetRyu").onclick=()=>applyPreset("ryu");
+  $("basicModeBtn").onclick=()=>setMode("basic");
+  $("proModeBtn").onclick=()=>setMode("pro");
+  $("basicSetup").onchange=e=>applyBasicSetup(e.target.value);
+  $("basicFireBtn").onclick=()=>{ applyBasicSetup($("basicSetup").value); playShot(); };
+  $("viewToggle").onclick=()=>{ state.view3d=!state.view3d; $("viewToggle").textContent=state.view3d?"立体断面":"平面断面"; recalc(); };
+  $("calibrateBtn").onclick=()=>calibrateFromMeasured();
+  $("calResetBtn").onclick=()=>{ state.calibration={vScale:1,rScale:1,active:false}; $("calNote").textContent="校正を解除しました。使用BB、ホップ量、気温、バッテリー状態を揃えた実測値で補正してください。"; recalc(); };
   document.querySelectorAll("#hopChips .chip").forEach(b=>{
     b.onclick = ()=>{
       document.querySelectorAll("#hopChips .chip").forEach(x=>x.classList.remove("on"));
@@ -850,6 +1105,74 @@ function bind(){
 let timer=null;
 function recalcSoon(){ clearTimeout(timer); timer=setTimeout(recalc, 90); }
 
+function setMode(mode){
+  const basic=mode==="basic";
+  document.body.classList.toggle("basic-mode",basic); document.body.classList.toggle("pro-mode",!basic);
+  $("basicModeBtn").classList.toggle("on",basic); $("proModeBtn").classList.toggle("on",!basic);
+  $("basicModeBtn").setAttribute("aria-selected",basic); $("proModeBtn").setAttribute("aria-selected",!basic);
+  if(!basic) $("auditNote").textContent="プロ版: 実測校正・安全診断・詳細定数で、構成の比較と事前検証を行います。実射確認は必須です。";
+  recalcSoon();
+}
+
+function applyBasicSetup(kind){
+  state.calibration={vScale:1,rScale:1,active:false};
+  state.sector="ssg"; state.teethCut=0; state.bearing=false; state.aoePadMM=0; state.nozzleD=4.3e-3;
+  if(kind==="hc"){ applyPreset("hc"); }
+  else if(kind==="cqb"){
+    state.batt="lipo74"; state.motor="std"; state.wire="fet"; state.gear="g18"; state.spring="m90"; state.cyl="c12"; state.barrelMM=208; state.bbG=.25; state.pistonG=20;
+    $("auditNote").textContent="一般版・CQB: 短銃身／低負荷の比較用構成。ホップ調整と実測初速で最終確認してください。";
+  } else if(kind==="outdoor"){
+    state.batt="lipo74"; state.motor="ht"; state.wire="fet"; state.gear="g18"; state.spring="m100"; state.cyl="c34"; state.barrelMM=363; state.bbG=.28; state.pistonG=20;
+    $("auditNote").textContent="一般版・屋外: 重量弾と中距離向けの比較用構成。フィールド規定に従って重量弾でも必ず計測してください。";
+  } else {
+    state.batt="nimh84"; state.motor="std"; state.wire="stock"; state.gear="g18"; state.spring="m90"; state.cyl="c34"; state.barrelMM=300; state.bbG=.20; state.pistonG=20;
+    $("auditNote").textContent="一般版・標準: 安定性を重視した基準構成。値は一般的な近似で、実射値を保証しません。";
+  }
+  $("barrelRange").value=state.barrelMM; $("barrelNum").value=state.barrelMM; $("pistonRange").value=state.pistonG; $("pistonNum").value=state.pistonG;
+  document.querySelectorAll("#sectorChips .chip").forEach(x=>x.classList.toggle("on",x.dataset.sector===state.sector));
+  buildAll(); recalc();
+}
+
+function calibrateFromMeasured(){
+  const raw=simulateInternal(), cyc=computeCycle();
+  const v=+$("calV").value, r=+$("calRps").value;
+  if(v>0) state.calibration.vScale=Math.max(.5,Math.min(1.5,v/Math.max(raw.v0,1)));
+  if(r>0 && !cyc.stall) state.calibration.rScale=Math.max(.5,Math.min(1.5,r/Math.max(cyc.rof,1)));
+  state.calibration.active=(v>0||r>0);
+  $("calNote").textContent=state.calibration.active ? `校正適用: 初速×${state.calibration.vScale.toFixed(3)} / RPS×${state.calibration.rScale.toFixed(3)}。同一条件で再計測してください。` : "初速またはRPSを入力してください。";
+  recalc();
+}
+
+function applyPreset(kind){
+  state.calibration={vScale:1,rScale:1,active:false};
+  if(kind==="hc"){
+    state.batt="nimh84"; state.motor="eg30000"; state.wire="fet"; state.gear="g13";
+    state.spring="m100"; state.teethCut=3; state.sector="ssg"; state.cyl="c12"; state.barrelMM=208;
+    state.bbG=.20; state.pistonG=20; state.nozzleD=4.3e-3;
+    $("auditNote").textContent="実機照合: マルイHCの 8.4V / EG30000 / 3歯カット / 約208mm を近似。結果はレビュー値（約80〜87m/s・最大25rps）の目安と比較してください。";
+  } else if(kind==="dsg"){
+    state.batt="lipo111"; state.motor="bl28"; state.wire="fet"; state.gear="g18"; state.spring="m140";
+    state.teethCut=8; state.sector="dsg"; state.cyl="c12"; state.barrelMM=247; state.bbG=.20;
+    $("auditNote").textContent="DSG基準: 8歯相当・M140・18:1・2発/回転。タペットタイミング、給弾、PMEはこの簡易モデルの対象外です。";
+  } else {
+    state.batt="lipo111"; state.motor="ht"; state.wire="fet"; state.gear="g18"; state.spring="m120";
+    state.teethCut=0; state.sector="ssg"; state.cyl="full"; state.barrelMM=141; state.bbG=.28; state.pistonG=40; state.nozzleD=2.6e-3;
+    PHYS.hopHold=2.4;
+    $("auditNote").textContent="流速基準: 短銃身・フルシリンダー・重量ピストン・強ホップの比較用。実射のジュールクリープは必ず重量弾で測定してください。";
+  }
+  $("barrelRange").value=state.barrelMM; $("barrelNum").value=state.barrelMM; $("pistonRange").value=state.pistonG; $("pistonNum").value=state.pistonG;
+  document.querySelectorAll("#sectorChips .chip").forEach(x=>x.classList.toggle("on",x.dataset.sector===state.sector));
+  buildAll(); recalc();
+}
+
+function playShot(){
+  const r=recalc(), svg=$("schem");
+  const ms=Math.max(140,Math.min(550,(r.cyc.stall?400:r.cyc.cycleMs)));
+  svg.style.setProperty("--shot-ms",ms+"ms");
+  svg.classList.remove("is-firing"); void svg.getBoundingClientRect(); svg.classList.add("is-firing");
+  setTimeout(()=>svg.classList.remove("is-firing"),ms+40);
+}
+
 /* ============================================================
    構成図: Ver.2型メカボックス断面 (パーツ連動)
    ============================================================ */
@@ -863,9 +1186,11 @@ function drawSchematic(intr){
   const CX0=330, CX1=608;                 // シリンダー左右 (後端=スプリングガイド, 前端=ヘッド)
   const cyMid=(CY0+CY1)/2;
 
-  // ピストン (中間位置で表示)
-  const stroke=CX1-CX0-58;
-  const pX = CX0+14 + stroke*0.32, pW=52;
+  // ピストン (中間位置で表示・ショートストローク/AOEパッド反映)
+  const ssFrac = Math.min(0.5, shortStrokeM()/PHYS.strokeM);   // ストローク短縮率
+  const padPx = state.aoePadMM>0 ? Math.max(4, state.aoePadMM*1.6) : 0;
+  const stroke=(CX1-CX0-58)*(1-ssFrac);
+  const pX = CX0+14 + (CX1-CX0-58)*ssFrac + stroke*0.32, pW=52;
 
   // スプリングコイル: ばね定数→巻き密度
   const coils = Math.max(5, Math.min(22, 5+Math.round(spr.k/80)));
@@ -889,12 +1214,15 @@ function drawSchematic(intr){
     const x=pX+4+i*7;
     rack+=`<rect x="${x}" y="${CY1-4}" width="4.5" height="7" fill="#c9b48a"/>`;
   }
-  // ギア歯 (破線円)
-  const gearC=(g,r,label)=>`
-    <circle cx="${g.x}" cy="${g.y}" r="${r}" fill="#ff5c5c22" stroke="#ff8080" stroke-width="2.4" stroke-dasharray="5 3.2"/>
-    <circle cx="${g.x}" cy="${g.y}" r="${r*0.55}" fill="none" stroke="#ff8080" stroke-width="1.2" opacity=".7"/>
-    <circle cx="${g.x}" cy="${g.y}" r="4.5" fill="#3a2020" stroke="#ff8080"/>
-    ${label?`<text x="${g.x}" y="${g.y+r+14}" fill="#b06060" font-size="10" text-anchor="middle" font-family="monospace">${label}</text>`:""}`;
+  // ギア歯: 立体断面でも回転方向と噛合い位置が分かる簡略形状
+  const gearC=(g,r,label)=>{
+    const teeth=Math.max(12,Math.round(r*.72));
+    const tooth=Array.from({length:teeth},(_,i)=>`<rect x="${g.x-2.5}" y="${g.y-r-5}" width="5" height="8" rx="1" fill="#aa6b50" transform="rotate(${i*360/teeth} ${g.x} ${g.y})"/>`).join("");
+    return `${tooth}<circle cx="${g.x}" cy="${g.y}" r="${r}" fill="url(#gearRad)" stroke="#cf8970" stroke-width="1.7"/>
+      <circle cx="${g.x}" cy="${g.y}" r="${r*.57}" fill="none" stroke="#53362e" stroke-width="2"/>
+      <circle cx="${g.x}" cy="${g.y}" r="${r*.15}" fill="#202831" stroke="#d2a078" stroke-width="2"/>
+      ${label?`<text x="${g.x}" y="${g.y+r+14}" fill="#b77a64" font-size="9" text-anchor="middle" font-family="monospace">${label}</text>`:""}`;
+  };
 
   // バレル (長さスケール)
   const hopX=648, barrelPx=Math.max(16, Math.min(260, state.barrelMM/800*260));
@@ -911,42 +1239,53 @@ function drawSchematic(intr){
       <stop offset="0" stop-color="#6ee7dc" stop-opacity=".30"/>
       <stop offset="1" stop-color="#6ee7dc" stop-opacity=".10"/>
     </linearGradient>
+    <linearGradient id="shellFace" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#6d7883"/><stop offset=".48" stop-color="#3d4752"/><stop offset="1" stop-color="#252d36"/></linearGradient>
+    <linearGradient id="cylBody" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#63717c"/><stop offset=".45" stop-color="#252e36"/><stop offset="1" stop-color="#10151a"/></linearGradient>
+    <radialGradient id="gearRad"><stop stop-color="#9c7564"/><stop offset=".65" stop-color="#604338"/><stop offset="1" stop-color="#302925"/></radialGradient>
+    <filter id="drop" x="-20%" y="-20%" width="150%" height="150%"><feDropShadow dx="5" dy="8" stdDeviation="4" flood-color="#000" flood-opacity=".6"/></filter>
   </defs>
 
-  <!-- メカボックスシェル -->
-  <path d="M180,110 L640,110 Q660,110 660,130 L660,206 L636,230 L636,300
-           Q636,318 618,318 L560,318 L540,358 Q534,370 520,370 L470,370
-           L455,338 L360,338 L360,384 Q360,396 348,396 L282,396 Q270,396 270,384 L270,338
-           L200,338 Q170,338 160,308 L150,250 Q146,230 160,214 L164,140 Q166,110 180,110 Z"
-        fill="#232a34" stroke="#6b7684" stroke-width="2"/>
-  ${[ [196,126],[380,124],[560,124],[640,200],[620,300],[175,320],[168,230] ].map(p=>
-     `<circle cx="${p[0]}" cy="${p[1]}" r="5" fill="#161b22" stroke="#525c68"/>`).join("")}
+  <!-- 一般的なVer.2シェル: シリンダー上段、ギア三角配置、下方モーターケージ -->
+  ${state.view3d?`<path d="M146,91 H654 Q680,91 682,116 V192 Q682,211 660,218 H638 L619,274 Q614,295 592,302 H550 L532,345 H459 L440,370 Q435,382 420,382 H275 Q262,382 262,366 V339 H211 Q182,339 169,310 L149,245 Q145,220 160,201 V118 Q160,91 185,91 Z" fill="#1a2027" transform="translate(10 11)" opacity=".9" filter="url(#drop)"/>`:""}
+  <path d="M146,91 H654 Q680,91 682,116 V192 Q682,211 660,218 H638 L619,274 Q614,295 592,302 H550 L532,345 H459 L440,370 Q435,382 420,382 H275 Q262,382 262,366 V339 H211 Q182,339 169,310 L149,245 Q145,220 160,201 V118 Q160,91 185,91 Z"
+        fill="url(#shellFace)" stroke="#9ba8b3" stroke-width="2.4" filter="url(#drop)"/>
+  <path d="M164,113 H650 Q663,113 663,127 V190 H630 L611,265 Q607,279 589,282 H535 L516,325 H469 L448,348 H287 V320 H224 Q203,320 193,296 L171,236 Q168,222 181,207 V128 Q181,113 195,113 Z" fill="#1a2027" stroke="#26313b" stroke-width="2"/>
+  ${[ [189,110],[342,109],[505,109],[650,111],[170,225],[190,306],[274,352],[430,352],[604,282],[659,203] ].map(p=>
+     `<circle cx="${p[0]}" cy="${p[1]}" r="7" fill="#202830" stroke="#b9c2c8" stroke-width="1.5"/><circle cx="${p[0]}" cy="${p[1]}" r="2" fill="#0d1115"/>`).join("")}
+  <text x="155" y="76" fill="#7f919d" font-size="10" font-family="monospace">VER.2 SHELL • ${state.view3d?"ISOMETRIC CUTAWAY":"ORTHOGRAPHIC CUTAWAY"}</text>
 
   <!-- シリンダー -->
+  ${state.view3d?`<rect x="${CX0+6}" y="${CY0+7}" width="${CX1-CX0}" height="${CY1-CY0}" rx="7" fill="#05080b" opacity=".8"/>`:""}
   <rect x="${CX0}" y="${CY0}" width="${CX1-CX0}" height="${CY1-CY0}" rx="5"
-        fill="#161b22" stroke="#8ea0ae" stroke-width="2"/>
+        fill="url(#cylBody)" stroke="#bac7cf" stroke-width="2"/>
+  <rect x="${CX0-9}" y="${CY0+8}" width="10" height="${CY1-CY0-16}" fill="#8d9ba4" stroke="#c1cbd1"/>
   ${guide}
   <!-- スプリング -->
   <path d="${sp}" fill="none" stroke="var(--amber)" stroke-width="2.6"/>
   <!-- ピストン + ラック -->
-  <rect x="${pX}" y="${CY0+5}" width="${pW}" height="${CY1-CY0-10}" rx="3"
+  <g class="moving-piston"><rect x="${pX}" y="${CY0+5}" width="${pW}" height="${CY1-CY0-10}" rx="3"
         fill="#3a2c12" stroke="var(--amber)" stroke-width="1.8"/>
-  ${rack}
+  ${rack}</g>
   <!-- 圧縮空気室 -->
-  <rect x="${pX+pW}" y="${CY0+5}" width="${CX1-6-(pX+pW)}" height="${CY1-CY0-10}"
+  <rect class="air-pulse" x="${pX+pW}" y="${CY0+5}" width="${Math.max(2,CX1-6-padPx-(pX+pW))}" height="${CY1-CY0-10}"
         fill="url(#airg)"/>
+  ${padPx>0?`<rect x="${CX1-6-padPx}" y="${CY0+5}" width="${padPx}" height="${CY1-CY0-10}" fill="#5a4a28" stroke="var(--amber)" stroke-width="1.2"/>
+  <text x="${CX1-6-padPx/2}" y="${CY0-9}" fill="var(--amber)" font-size="9" text-anchor="middle" font-family="monospace">AOE</text>`:""}
   ${cyl.eff<0.999?`
     <circle cx="${portX}" cy="${CY0}" r="4" fill="#0e1216" stroke="var(--cyan)" stroke-width="1.6"/>
     <text x="${portX}" y="${CY0-9}" fill="var(--cyan)" font-size="9.5" text-anchor="middle" font-family="monospace">PORT ${(cyl.eff*100).toFixed(0)}%</text>`:""}
-  <text x="${(CX0+CX1)/2}" y="${CY0-22}" fill="#8ea0ae" font-size="10.5" text-anchor="middle" font-family="monospace">CYLINDER ${cyl.name} — SPRING ${spr.name} (k=${spr.k}N/m)${state.bearing?" +BRG":""}</text>
+  <text x="${(CX0+CX1)/2}" y="${CY0-22}" fill="#8ea0ae" font-size="10.5" text-anchor="middle" font-family="monospace">CYLINDER ${cyl.name} — SPRING ${spr.name} (k=${spr.k}N/m)${state.bearing?" +BRG":""}${shortStrokeM()>0?` — 実効ST ${(strokeEff()*1000).toFixed(1)}mm`:""}</text>
+  <path d="M${CX1-10},${CY0+3} l13,8 v40 l-13,8 z" fill="#343d48" stroke="#a2b1bd" stroke-width="1.5"/>
 
   <!-- タペットプレート -->
-  <rect x="${pX+pW+30}" y="${CY1+8}" width="${CX1-(pX+pW)-40}" height="6" rx="2" fill="#3d4550" stroke="#5c6570"/>
+  <path d="M${pX+pW+26},${CY1+11} h${Math.max(32,CX1-(pX+pW)-54)} l10,7 h-18 l-10,-4 h-${Math.max(20,CX1-(pX+pW)-72)} z" fill="#38424c" stroke="#8794a0" stroke-width="1.4"/>
+  <text x="${CX1-1}" y="${CY1+34}" fill="#8794a0" font-size="8.5" text-anchor="middle" font-family="monospace">TAPPET PLATE</text>
 
   <!-- ノズル → ホップチャンバー → バレル -->
-  <rect x="${CX1}" y="${cyMid-11}" width="40" height="22" rx="3" fill="url(#airg)" stroke="var(--cyan)" stroke-width="1.6"/>
+  <rect x="${CX1}" y="${cyMid-Math.max(3,state.nozzleD*1000*2.5)}" width="40" height="${Math.max(6,state.nozzleD*1000*5)}" rx="3" fill="url(#airg)" stroke="var(--cyan)" stroke-width="1.6"/>
+  <text x="${CX1+20}" y="${cyMid+30}" fill="#5c8a86" font-size="9" text-anchor="middle" font-family="monospace">φ${(state.nozzleD*1000).toFixed(1)}</text>
   <path d="M${hopX},${cyMid-17} q12,-11 24,0 l0,34 q-12,11 -24,0 z" fill="#2a2118" stroke="#c9853a" stroke-width="1.6"/>
-  <circle cx="${hopX+12}" cy="${cyMid}" r="5" fill="#e9e5da"/>
+  <circle class="bb-shot" cx="${hopX+12}" cy="${cyMid}" r="5" fill="#e9e5da"/>
   <rect x="${hopX+8}" y="${cyMid-20}" width="9" height="7" rx="2" fill="#c9853a"/>
   <text x="${hopX+12}" y="${cyMid-26}" fill="#c9853a" font-size="9.5" text-anchor="middle" font-family="monospace">HOP</text>
   <rect x="${hopX+24}" y="${cyMid-6}" width="${barrelPx}" height="12" fill="url(#airg)" stroke="var(--tracer)" stroke-width="1.5"/>
@@ -954,16 +1293,20 @@ function drawSchematic(intr){
   <text x="${Math.min(hopX+30+barrelPx, 838)}" y="${cyMid-12}" fill="var(--tracer)" font-size="13" font-family="monospace">→ ${intr.v0.toFixed(1)} m/s</text>
 
   <!-- ギア列 -->
-  ${gearC(bev,bevR,"BEVEL")}
-  ${gearC(spu,spurR,"SPUR")}
-  ${gearC(sec,secR,"SECTOR")}
+  <g class="moving-bevel" style="--bev-x:${bev.x}px;--bev-y:${bev.y}px">${gearC(bev,bevR,"BEVEL")}</g>
+  <g class="moving-spur" style="--spur-x:${spu.x}px;--spur-y:${spu.y}px">${gearC(spu,spurR,"SPUR")}</g>
+  <g class="moving-sector" style="--sec-x:${sec.x}px;--sec-y:${sec.y}px">${gearC(sec,secR,"SECTOR")}</g>
   <text x="${spu.x+6}" y="${spu.y-spurR-10}" fill="#ff8080" font-size="11" text-anchor="middle" font-family="monospace">GEARS ${gear.ratio}:1</text>
+  <path d="M${bev.x-14},${bev.y-18} q-23,0 -26,23 l12,-6 q2,-10 15,-8 z" fill="#44505c" stroke="#9aa8b6" stroke-width="1.5"/>
+  <text x="${bev.x-43}" y="${bev.y+18}" fill="#788694" font-size="8.5" text-anchor="middle" font-family="monospace">A/R LATCH</text>
 
-  <!-- モーター (ピニオン→ベベル) -->
-  <circle cx="${bev.x}" cy="${bev.y+bevR+14}" r="11" fill="none" stroke="#8892a0" stroke-width="2" stroke-dasharray="3.5 2.5"/>
-  <rect x="${bev.x-26}" y="${bev.y+bevR+26}" width="52" height="56" rx="7" fill="#1a1f27" stroke="#8892a0" stroke-width="2"/>
-  <text x="${bev.x}" y="${bev.y+bevR+52}" fill="#8892a0" font-size="10" text-anchor="middle" font-family="monospace">MOTOR</text>
-  <text x="${bev.x}" y="${bev.y+bevR+66}" fill="#5c6570" font-size="9" text-anchor="middle" font-family="monospace">${(mot.n0/1000).toFixed(0)}krpm/${mot.Ts.toFixed(2)}Nm</text>
+  <!-- モーターケージ: ベベル直下へ入るVer.2のピニオン／モーター -->
+  ${state.view3d?`<ellipse cx="${bev.x+5}" cy="${bev.y+bevR+72}" rx="30" ry="10" fill="#090c0f" opacity=".7"/>`:""}
+  <circle cx="${bev.x}" cy="${bev.y+bevR+14}" r="11" fill="#2b343c" stroke="#bec8cc" stroke-width="2"/>
+  <g transform="rotate(-12 ${bev.x} ${bev.y+bevR+53})"><rect x="${bev.x-26}" y="${bev.y+bevR+26}" width="52" height="62" rx="16" fill="#11171d" stroke="#a8b5bb" stroke-width="2"/>
+  <rect x="${bev.x-22}" y="${bev.y+bevR+30}" width="44" height="8" rx="4" fill="#5d6b72" opacity=".65"/></g>
+  <text x="${bev.x}" y="${bev.y+bevR+57}" fill="#c0c9ce" font-size="9" text-anchor="middle" font-family="monospace">${mot.kind==="brushless"?"BLDC":"MOTOR"}</text>
+  <text x="${bev.x}" y="${bev.y+bevR+71}" fill="#83939c" font-size="8" text-anchor="middle" font-family="monospace">${(mot.n0/1000).toFixed(0)}krpm/${mot.Ts.toFixed(2)}Nm</text>
 
   <!-- スイッチ + トリガー -->
   <rect x="${sec.x+62}" y="${sec.y-30}" width="46" height="26" rx="3" fill="#2a2118" stroke="#c9853a" stroke-width="1.5"/>
@@ -991,7 +1334,7 @@ function card(k,v,unit,sub,cls){
   return `<div class="card ${cls||""}"><div class="k">${k}</div>
     <div class="v">${v}<em>${unit||""}</em></div>${sub?`<div class="s">${sub}</div>`:""}</div>`;
 }
-function renderCards(cyc, intr, traj){
+function renderCards(cyc, intr, traj, creep){
   const legal = intr.E0 <= 0.98;
   let html = "";
   html += card("銃口初速 (Stage3)", intr.v0.toFixed(1), "m/s",
@@ -1001,7 +1344,7 @@ function renderCards(cyc, intr, traj){
       `負荷${cyc.Tload.toFixed(3)}N·m ≥ 失速${cyc.Ts.toFixed(3)}N·m — モーター/ギア比を見直し`, "");
   } else {
     html += card("サイクル (Stage1)", cyc.rof.toFixed(1), "発/秒",
-      `1発 ${cyc.cycleMs.toFixed(0)}ms / レスポンス目安 ${cyc.responseMs.toFixed(0)}ms`);
+      `1発 ${cyc.cycleMs.toFixed(0)}ms / レスポンス目安 ${cyc.responseMs.toFixed(0)}ms${cyc.vacKPa>1?` / 吸気負圧 -${cyc.vacKPa.toFixed(0)}kPa`:""}`);
     html += card("消費電流", cyc.I.toFixed(1), "A",
       `電圧サグ後 ${cyc.V.toFixed(2)}V / モーター負荷率 ${(100*cyc.Tload/cyc.Ts).toFixed(0)}%`);
   }
@@ -1009,11 +1352,19 @@ function renderCards(cyc, intr, traj){
     intr.volRatio<1.3 ? "⚠ 容積不足(初速低下・重量弾×)" :
     intr.volRatio>3.8 ? "⚠ 過大(オーバーボリューム)" : "目安 1.5〜3.5 ✓");
   html += card("エネルギー効率", intr.effPct.toFixed(0), "%",
-    `スプリング ${intr.Espring.toFixed(2)}J → BB ${intr.E0.toFixed(2)}J / 最大内圧 +${((intr.Pmax-101325)/1000).toFixed(0)}kPa`);
+    `スプリング ${intr.Espring.toFixed(2)}J → BB ${intr.E0.toFixed(2)}J / 最大内圧 +${((intr.Pmax-101325)/1000).toFixed(0)}kPa${intr.choked?" / <span style='color:var(--amber)'>ノズルチョーク発生</span>":""}`);
   html += card("飛距離 (Stage4)", traj.res.landX.toFixed(1), "m",
     `滞空 ${traj.res.landT.toFixed(2)}s / 着弾 ${traj.res.landV.toFixed(1)}m/s・${traj.res.landE.toFixed(2)}J`);
   html += card("ホップ回転数", traj.spin===null?"—":traj.spin.toFixed(0), "rps",
     traj.res.zeroIn ? `ゼロイン ${traj.res.zeroIn.toFixed(1)}m / 最大浮き +${(traj.res.maxRise*100).toFixed(1)}cm` : "");
+  if (creep){
+    const r = creep.e20>0 ? creep.e43/creep.e20 : 0;
+    const verdict = r>1.05 ? "流速型 (ジュールクリープ)" : r<0.95 ? "吐出型 (軽量弾向き)" : "中間特性";
+    const col = r>1.05 ? "var(--amber)" : "var(--sub)";
+    const over43 = creep.e43>0.98 ? ` / <span class="warn">⚠ 0.43g使用時 ${creep.e43.toFixed(2)}J で0.98J超過</span>` : "";
+    html += card("重量弾特性", r.toFixed(2), "倍",
+      `<span style="color:${col}">${verdict}</span> / 0.20g:${creep.e20.toFixed(2)}J → 0.43g:${creep.e43.toFixed(2)}J${over43}`);
+  }
   $("cards").innerHTML = html;
 }
 
@@ -1037,7 +1388,7 @@ function drawInternal(intr){
   const log=intr.log;
   if(!log.length) return;
   const tMax = log[log.length-1].t*1000;
-  const pMax = Math.max(...log.map(p=>p.Pg))*1.08 || 1;
+  const pMax = Math.max(...log.map(p=>Math.max(p.Pg,p.Pb||0)))*1.08 || 1;
   const vMax = Math.max(...log.map(p=>p.vb))*1.1 || 1;
   const X=t=>L+(w-L-R)*t/tMax;
   const Y=f=>T+(h-T-B)*(1-f);
@@ -1059,6 +1410,7 @@ function drawInternal(intr){
   };
   plot("xp",1,"#ffb454");
   plot("Pg",pMax,"#6ee7dc");
+  plot("Pb",pMax,"#4aa3e0");
   plot("vb",vMax,"#8dfb98");
   if (intr.bbExitT!==null){
     const x=X(intr.bbExitT*1000);
@@ -1129,12 +1481,30 @@ function renderTable(res){
   $("tblBody").innerHTML = rows.join("");
 }
 
+function renderDiagnostics(cyc,intr,creep){
+  const bat=curBatt(), mot=curMotor(), warnings=[];
+  const batLimit=(bat.capAh||1.0)*(bat.C||10);
+  if(cyc.stall) warnings.push(["danger","駆動停止: 推定負荷トルクがモーター限界に近く、実機では発熱・破損の危険があります。"]);
+  else {
+    if(cyc.I>batLimit) warnings.push(["danger",`電池負荷: 推定${cyc.I.toFixed(0)}Aが設定電池の連続目安${batLimit.toFixed(0)}Aを超えます。Cレート・配線・コネクターを再確認してください。`]);
+    if(mot.kind==="brushless" && mot.escA && cyc.I>mot.escA) warnings.push(["warn",`ESC保護域: 推定${cyc.I.toFixed(0)}A。選択BLDCのESC目安${mot.escA}Aを超える可能性があります。`]);
+    if(cyc.rof>30 && curSpring().k<500) warnings.push(["warn","PME注意: 高サイクルに対してスプリング荷重が低めです。実機ではピストン追従、AOE、重量、給弾を確認してください。"]);
+    if(state.sector==="dsg" && state.teethCut<7) warnings.push(["danger","DSG設定不整合: 2発/回転では短ストローク量が不足しています。セクター歯数・ラック・タペット時期を実機寸法で確認してください。"]);
+    if(intr.volRatio<1.3 || intr.volRatio>3.8) warnings.push(["warn",`容積比${intr.volRatio.toFixed(2)}:1: シリンダー／バレルの組合せが極端です。実測初速と重量弾のジュールを必ず確認してください。`]);
+    if(creep.e43>0.98) warnings.push(["danger",`重量弾安全値: 0.43g推定${creep.e43.toFixed(2)}J。0.98Jを超えます。フィールド規定より先に安全側へ再設定してください。`]);
+  }
+  const body=warnings.length ? warnings.map(w=>`<div class="diag-${w[0]}">● ${w[1]}</div>`).join("") : '<div class="diag-ok">● 現在の入力では明確な警告条件なし。実機の気密・給弾・温度・ホップは別途確認してください。</div>';
+  $("diagnostics").innerHTML=`<h3>PRO SAFETY DIAGNOSTICS</h3>${body}`;
+}
+
 /* ============================================================
    統合再計算
    ============================================================ */
 function recalc(){
-  const cyc = computeCycle();
-  const intr = simulateInternal();
+  const cycRaw = computeCycle();
+  const intrRaw = simulateInternal();
+  const cyc = (!cycRaw.stall && state.calibration.active) ? {...cycRaw, rof:cycRaw.rof*state.calibration.rScale, cycleMs:cycRaw.cycleMs/state.calibration.rScale} : cycRaw;
+  const intr = state.calibration.active ? {...intrRaw, v0:intrRaw.v0*state.calibration.vScale, E0:intrRaw.E0*state.calibration.vScale**2} : intrRaw;
 
   const base = {v0:Math.max(intr.v0,1), massG:curBBg(), bbD:curBBd(), h0:state.h0,
                 angleDeg:state.angleDeg, drag:state.drag};
@@ -1156,11 +1526,26 @@ function recalc(){
   const resNo = simulateTraj({...base, spinRps:0});
   const traj = {spin, res, resNo};
 
+  // 重量弾特性 (0.20g vs 0.43g で内部弾道を再計算しエネルギー比較)
+  const creep = {
+    e20: simulateInternal({bbG:0.20}).E0*state.calibration.vScale**2,
+    e43: simulateInternal({bbG:0.43}).E0*state.calibration.vScale**2,
+  };
+
   drawSchematic(intr);
-  renderCards(cyc, intr, traj);
+  renderCards(cyc, intr, traj, creep);
   drawInternal(intr);
   drawTraj(traj);
   renderTable(res);
+  renderDiagnostics(cyc,intr,creep);
+  if(document.body.classList.contains("basic-mode")) $("basicResult").textContent=cyc.stall ? "この構成は負荷が大きすぎます。別の用途を選ぶか、プロ版で確認してください。" : `推定: ${intr.v0.toFixed(1)}m/s / ${cyc.rof.toFixed(1)}rps / ${intr.E0.toFixed(2)}J。実測初速・安全規定を必ず確認してください。`;
+  if ($("auditNote").textContent==="実機照合: 未選択") {
+    const hcLike=state.motor==="eg30000" && state.batt==="nimh84" && state.teethCut===3;
+    $("auditNote").textContent=hcLike
+      ? `実機照合: HC候補の計算値 ${intr.v0.toFixed(1)}m/s / ${cyc.stall?"停止":cyc.rof.toFixed(1)+"rps"}。レビュー目安（80〜87m/s・最大25rps）との差は、電池の内部抵抗・個体差・給弾抵抗を含まないため参考値です。`
+      : "実機照合: パーツ選択後に「マルイ HC 近似」または各基準プリセットで比較できます。";
+  }
+  return {cyc,intr,traj,creep};
 }
 
 buildAll();
